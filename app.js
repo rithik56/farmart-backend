@@ -59,7 +59,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     }
 
     else {
-      res.status(400).send('File with this name and type already exists')
+      throw 'file with this name and type already exists'
     }
 
   } catch (err) {
@@ -75,7 +75,7 @@ app.get('/files', async (req, res) => {
       files
     })
   } catch(err) {
-    console.log(err)
+    res.status(400).send(err)
   }
 })
 

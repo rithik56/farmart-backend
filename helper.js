@@ -17,7 +17,7 @@ const getTinyURL = async (url) => {
         const response = await fetch(`https://tinyurl.com/api-create.php?url=${url}`);
         return response.text();
     } catch (err) {
-        throw new Error('unable to shorten the url')
+        throw 'unable to shorten the url'
     }
 }
 
