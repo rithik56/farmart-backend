@@ -14,8 +14,17 @@ const s3 = new AWS.S3({
 
 const getTinyURL = async (url) => {
     try {
-        const response = await fetch(`https://tinyurl.com/api-create.php?url=${url}`);
-        return response.text();
+        let response = await fetch(`https://api.tinyurl.com/create?api_token=${process.env.API_TOKEN}`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                url
+            })
+        });
+        response = await response.json()
+        return response.data.tiny_url;
     } catch (err) {
         throw 'unable to shorten the url'
     }
