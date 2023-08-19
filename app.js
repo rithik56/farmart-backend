@@ -38,9 +38,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     const result = await uploadFile(fileData)
     await unlinkFile(path)
 
-    console.log(`${process.env.BASE_URL}:${port}/images/${result.Key}`)
-
-    const shortUrl = await getTinyURL(`${process.env.BASE_URL}:${port}/images/${result.Key}`)
+    const shortUrl = await getTinyURL(`${process.env.BASE_URL}/images/${result.Key}`)
 
     const count = await File.count({ name: originalname })
 
