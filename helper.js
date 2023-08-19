@@ -13,8 +13,12 @@ const s3 = new AWS.S3({
 });
 
 const getTinyURL = async (url) => {
-    const response = await fetch(`https://tinyurl.com/api-create.php?url=${url}`);
-    return response.text();
+    try {
+        const response = await fetch(`https://tinyurl.com/api-create.php?url=${url}`);
+        return response.text();
+    } catch (err) {
+        throw new Error('unable to shorten the url')
+    }
 }
 
 const uploadFile = (fileData) => {
