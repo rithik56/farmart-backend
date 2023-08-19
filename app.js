@@ -63,7 +63,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     }
 
   } catch (err) {
-    res.status(400).send('Unable to upload file')
+    res.status(400).send(err)
   }
 
 })
