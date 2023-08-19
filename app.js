@@ -12,7 +12,7 @@ const unlinkFile = util.promisify(fs.unlink)
 
 const File = require('./File')
 
-mongoose.connect("mongodb://0.0.0.0:27017/test")
+mongoose.connect(process.env.MONGODB_CONNECT_URI)
   .then(() => console.log('connected successfully'))
   .catch((err) => console.log(err))
 
@@ -38,7 +38,9 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     const result = await uploadFile(fileData)
     await unlinkFile(path)
 
-    const shortUrl = await getTinyURL(`http://localhost:8000/images/${result.Key}`)
+    console.log(`${process.env.BASE_URL}:${port}/images/${result.Key}`)
+
+    const shortUrl = await getTinyURL(`${process.env.BASE_URL}:${port}/images/${result.Key}`)
 
     const count = await File.count({ name: originalname })
 
@@ -79,6 +81,4 @@ app.get('/files', async (req, res) => {
   }
 })
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
-});
+app.listen(port);
