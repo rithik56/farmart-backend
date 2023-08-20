@@ -4,8 +4,7 @@ const cors = require('cors')
 const formidable = require('formidable')
 const express = require('express')
 const fs = require('node:fs')
-const mongoose = require('mongoose');
-
+const mongoose = require('mongoose')
 const { uploadFile, getTinyURL, getFileStream } = require('./helper')
 
 const File = require('./File')
@@ -34,7 +33,7 @@ app.post('/upload', async (req, res) => {
 
     try {
 
-      const fileData = files.files[0]
+      const fileData = files.file[0]
       const { originalFilename, size, mimetype, filepath } = fileData
 
       const rawData = fs.readFileSync(filepath)
