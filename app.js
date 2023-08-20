@@ -3,7 +3,7 @@ require('dotenv').config()
 const cors = require('cors')
 const formidable = require('formidable')
 const express = require('express')
-const fs = require('fs')
+const fs = require('node:fs')
 const mongoose = require('mongoose');
 
 const { uploadFile, getTinyURL, getFileStream } = require('./helper')
