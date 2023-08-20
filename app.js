@@ -18,14 +18,13 @@ const port = process.env.PORT
 
 app.use(cors())
 
-app.get('/images/:key', (req, res) => {
+app.get('/docs/:key', (req, res) => {
   const key = req.params.key
   const readStream = getFileStream(key)
   readStream.pipe(res)
 })
 
 app.post('/upload', async (req, res) => {
-
 
   const form = new formidable.IncomingForm();
 
@@ -38,7 +37,7 @@ app.post('/upload', async (req, res) => {
 
       const rawData = fs.readFileSync(filepath)
       const result = await uploadFile(originalFilename, rawData)
-      const shortUrl = await getTinyURL(`${process.env.BASE_URL}/images/${result.Key}`)
+      const shortUrl = await getTinyURL(`${process.env.BASE_URL}/docs/${result.Key}`)
 
       const count = await File.count({ name: originalFilename })
 
@@ -74,7 +73,7 @@ app.post('/upload', async (req, res) => {
 
 app.get('/files', async (req, res) => {
   try {
-    const files = await File.find()
+    const files = await File.find().sort({_id:-1})
     res.send({
       files
     })
