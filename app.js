@@ -32,7 +32,7 @@ app.post('/upload', async (req, res) => {
   form.parse(req, async function (err, fields, files) {
 
     try {
-
+      console.log('<<<files', files)
       const fileData = files.file[0]
       const { originalFilename, size, mimetype, filepath } = fileData
 
