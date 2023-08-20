@@ -1,14 +1,15 @@
 require('dotenv').config()
 
 const cors = require('cors')
-const multer = require('multer')
+const formidable = require('formidable')
 const express = require('express')
 const fs = require('fs')
-const util = require('util')
+// const util = require('util')
+// const path = require('path')
 const mongoose = require('mongoose');
 
 const { uploadFile, getTinyURL, getFileStream } = require('./helper')
-const unlinkFile = util.promisify(fs.unlink)
+// const unlinkFile = util.promisify(fs.unlink)
 
 const File = require('./File')
 
@@ -17,11 +18,9 @@ mongoose.connect(process.env.MONGODB_CONNECT_URI)
   .catch((err) => console.log(err))
 
 const app = express()
-const port = process.env.PORT || 8000
+const port = process.env.PORT
 
 app.use(cors())
-
-const upload = multer({ dest: 'uploads/' })
 
 app.get('/images/:key', (req, res) => {
   const key = req.params.key
@@ -29,40 +28,46 @@ app.get('/images/:key', (req, res) => {
   readStream.pipe(res)
 })
 
-app.post('/upload', upload.single('file'), async (req, res) => {
+app.post('/upload', async (req, res) => {
 
   try {
-    const fileData = req.file
-    const { originalname, path, size, mimetype, encoding } = fileData
 
-    const result = await uploadFile(fileData)
-    await unlinkFile(path)
+    const form = new formidable.IncomingForm();
 
-    const shortUrl = await getTinyURL(`${process.env.BASE_URL}/images/${result.Key}`)
+    form.parse(req, async function (_, _, files) {
+      
+      const fileData = files.file[0]
+      const { originalFilename, size, mimetype, filepath } = fileData
+      
+      const rawData = fs.readFileSync(filepath)
+      const result = await uploadFile(originalFilename, rawData)
+      const shortUrl = await getTinyURL(`${process.env.BASE_URL}/images/${result.Key}`)
 
-    const count = await File.count({ name: originalname })
+      const count = await File.count({ name: originalFilename })
 
-    if (count === 0) {
+      if (count === 0) {
 
-      const file = await File.create({
-        url: shortUrl,
-        name: originalname,
-        mimetype,
-        encoding,
-        size
-      })
+        await File.create({
+          url: shortUrl,
+          name: originalFilename,
+          mimetype,
+          size
+        })
 
-      res.send({
-        shortUrl: shortUrl
-      })
+        res.status(200).send({
+          shortUrl: shortUrl
+        })
 
-    }
+      }
 
-    else {
-      throw 'file with this name and type already exists'
-    }
+      else {
+        throw 'file with this name and type already exists'
+      }
+    })
+
 
   } catch (err) {
+    console.log(err)
     res.status(400).send(err)
   }
 
@@ -74,7 +79,7 @@ app.get('/files', async (req, res) => {
     res.send({
       files
     })
-  } catch(err) {
+  } catch (err) {
     res.status(400).send(err)
   }
 })

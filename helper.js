@@ -30,16 +30,12 @@ const getTinyURL = async (url) => {
     }
 }
 
-const uploadFile = (fileData) => {
-
-    const { path, originalname: fileName } = fileData
-
-    const blob = fs.readFileSync(path)
+const uploadFile = (fileName, rawData) => {
 
     const params = {
         Bucket,
         Key: fileName,
-        Body: blob
+        Body: rawData
     }
 
     return s3.upload(params).promise()
