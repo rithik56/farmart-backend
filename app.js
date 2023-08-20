@@ -34,7 +34,7 @@ app.post('/upload', async (req, res) => {
 
     const form = new formidable.IncomingForm();
 
-    form.parse(req, async function (_, _, files) {
+    form.parse(req, async function (err, fields, files) {
       
       const fileData = files.file[0]
       const { originalFilename, size, mimetype, filepath } = fileData

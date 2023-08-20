@@ -1,5 +1,4 @@
 const AWS = require('aws-sdk');
-const fs = require('fs')
 
 const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
 const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
