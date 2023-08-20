@@ -30,15 +30,18 @@ app.get('/images/:key', (req, res) => {
 
 app.post('/upload', async (req, res) => {
 
-  try {
 
-    const form = new formidable.IncomingForm();
+  const form = new formidable.IncomingForm();
 
-    form.parse(req, async function (err, fields, files) {
+  form.parse(req, async function (err, fields, files) {
+
+    try {
       
-      const fileData = files.file[0]
+      console.log(err, fields, files)
+
+      const fileData = files.files[0]
       const { originalFilename, size, mimetype, filepath } = fileData
-      
+
       const rawData = fs.readFileSync(filepath)
       const result = await uploadFile(originalFilename, rawData)
       const shortUrl = await getTinyURL(`${process.env.BASE_URL}/images/${result.Key}`)
@@ -60,16 +63,18 @@ app.post('/upload', async (req, res) => {
 
       }
 
+
       else {
         throw 'file with this name and type already exists'
       }
-    })
 
+    } catch (err) {
+      console.log(err)
+      res.status(400).send(err)
 
-  } catch (err) {
-    console.log(err)
-    res.status(400).send(err)
-  }
+    }
+
+  })
 
 })
 
