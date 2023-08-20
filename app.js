@@ -4,12 +4,9 @@ const cors = require('cors')
 const formidable = require('formidable')
 const express = require('express')
 const fs = require('fs')
-// const util = require('util')
-// const path = require('path')
 const mongoose = require('mongoose');
 
 const { uploadFile, getTinyURL, getFileStream } = require('./helper')
-// const unlinkFile = util.promisify(fs.unlink)
 
 const File = require('./File')
 
@@ -36,8 +33,6 @@ app.post('/upload', async (req, res) => {
   form.parse(req, async function (err, fields, files) {
 
     try {
-      
-      console.log(err, fields, files)
 
       const fileData = files.files[0]
       const { originalFilename, size, mimetype, filepath } = fileData
